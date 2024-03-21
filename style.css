@@ -1,0 +1,80 @@
+/* global */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #292524;
+  color: #fafaf9;
+  font-family: "Jura", sans-serif;
+  font-weight: 600;
+  padding: 40px;
+}
+
+.header {
+  margin-bottom: 40px;
+
+  /* allows use of flexbox, which organizes things side by side */
+  display: flex;
+  /* changes from stretch to center (the button) */
+  align-items: center;
+  /* adjusts the horizontal centering (default is flex start)*/
+  /* space between equally distributes space */
+  justify-content: space-between;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  /* this flexbox property creates a gap of x pixels between all elements */
+  gap: 16px;
+}
+
+.fact-form {
+  background-color: #78716c;
+  margin-bottom: 40px;
+  padding: 16px 40px;
+  text-align: center;
+}
+
+h1 {
+  font-size: 42px;
+
+  text-transform: uppercase;
+  text-align: center;
+  font-family: "Madimi One", sans-serif;
+  font-weight: 800;
+}
+
+.fact {
+  font-size: 20px;
+  line-height: 1.4;
+  background-color: #78716c;
+  margin-bottom: 16px;
+  /* 2 args, first is vertical 2nd is horizontal */
+  padding: 16px 30px;
+  /* 3 args for border */
+  border: 4px solid black;
+  /* overwrites regular padding since comes after */
+  padding-left: 30px;
+
+  /* time for flexbox */
+  display: flex;
+  align-items: center;
+}
+
+.tag {
+  text-transform: uppercase;
+  font-size: 14px;
+  font-weight: 400;
+  font-family: "Madimi One", sans-serif;
+  padding-top: 3px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+ul {
+  list-style: none;
+}
