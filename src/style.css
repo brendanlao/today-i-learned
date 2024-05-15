@@ -18,6 +18,14 @@ body {
   display: none !important;
 }
 
+.message {
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 32px;
+  font-weight: 900;
+  margin-top: 24px;
+}
+
 /* layouts */
 /* use # for id */
 #root {

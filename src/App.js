@@ -1,5 +1,7 @@
 import "./style.css";
-import { useState } from "react";
+//API keys contained in supabase.js
+import supabase from "./supabase";
+import { useEffect, useState } from "react";
 
 const CATEGORIES = [
   { name: "technology", color: "#3b82f6" },
@@ -50,18 +52,48 @@ const initialFacts = [
 //Separate JS for each component in a big project
 //Curly braces can be used in JSX to write JS
 function App() {
+  const [facts, setFacts] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  //empty array ensures that useEffect only runs when the app renders
+
+  useEffect(function () {
+    async function getFacts() {
+      setIsLoading(true);
+      const { data: facts, error } = await supabase.from("facts").select("*");
+      setFacts(facts);
+      setIsLoading(false);
+    }
+    getFacts();
+  }, []);
   return (
     <>
-      <Header showForm={showForm} setShowForm={setShowForm} />{" "}
+      <Header showForm={showForm} setShowForm={setShowForm} />
       {/* Pass setShowForm as a prop*/}
-      {showForm ? <NewFactForm /> : null} {/* Toggle showing the fact form */}
+      {showForm ? (
+        <NewFactForm setFacts={setFacts} setShowForm={setShowForm} />
+      ) : null}{" "}
+      {/* Toggle showing the fact form */}
       <main className="main">
         <CategoryFilter />
-        <FactList />
+        {isLoading ? <Loader /> : <FactList facts={facts} />}
       </main>
     </>
   );
+}
+
+function Loader() {
+  return <p className="message">Loading...</p>;
+  // <TailSpin // Type of spinner
+  //   height="80"
+  //   width="80"
+  //   color="#4fa94d"
+  //   ariaLabel="tail-spin-loading"
+  //   radius="1"
+  //   wrapperStyle={{}}
+  //   wrapperClass=""
+  //   visible={true}
+  // />;
 }
 
 function Header({ showForm, setShowForm }) {
@@ -76,13 +108,14 @@ function Header({ showForm, setShowForm }) {
         className="btn btn-large btn-open"
         onClick={() => setShowForm((form) => !form)}
       >
-        {showForm ? "Close" : "Share a Fact"}{" "}
+        {showForm ? "Close" : "Share a Fact"}
         {/*Change the text depending on the state of showForm*/}
       </button>
     </header>
   );
 }
 
+//check the source input for a valid url
 function validURL(string) {
   let url;
 
@@ -94,7 +127,7 @@ function validURL(string) {
   return url.protocol === "http:" || url.protocol === "https:";
 }
 
-function NewFactForm() {
+function NewFactForm({ setFacts, setShowForm }) {
   const [text, setText] = useState("");
   const [source, setSource] = useState("");
   const [category, setCategory] = useState("");
@@ -108,10 +141,11 @@ function NewFactForm() {
     //Check if the data is valid
     if (text && validURL(source) && category && text.length <= TEXT_LIMIT) {
       console.log("There is valid data");
+    } else {
     }
 
     //Create a new fact if the data is valid
-    //properties have same name as variables
+    //properties have same name as variables, so don't need : val
     const newFact = {
       id: Math.round(Math.random() * 100),
       text,
@@ -124,10 +158,16 @@ function NewFactForm() {
     };
 
     //Add the fact to the UI
+    setFacts((fact) => [newFact, ...fact]);
+    // setFacts((fact) => fact.push(newFact)); NOT RECOMMENDED BECAUSE TREAT STATE AS IMMUTABLE
 
     //Reset the input field
+    setText("");
+    setSource("");
+    setCategory("");
 
     //Close the form
+    setShowForm(false);
   }
 
   return (
@@ -142,7 +182,7 @@ function NewFactForm() {
       <span>{TEXT_LIMIT - text.length}</span>
       <input
         type="text"
-        placeholder="Add a source..."
+        placeholder="http://example.com"
         value={source}
         onChange={(e) => setSource(e.target.value)}
       />
@@ -184,8 +224,7 @@ function CategoryFilter() {
   );
 }
 
-function FactList() {
-  const facts = initialFacts;
+function FactList({ facts }) {
   return (
     <section>
       <ul className="facts-list">
