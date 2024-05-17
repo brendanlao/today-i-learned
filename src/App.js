@@ -14,77 +14,97 @@ const CATEGORIES = [
   { name: "news", color: "#8b5cf6" },
 ];
 
-const initialFacts = [
-  {
-    id: 1,
-    text: "React is being developed by Meta (formerly facebook)",
-    source: "https://opensource.fb.com/",
-    category: "technology",
-    votesInteresting: 24,
-    votesMindblowing: 9,
-    votesFalse: 4,
-    createdIn: 2021,
-  },
-  {
-    id: 2,
-    text: "Millennial dads spend 3 times as much time with their kids than their fathers spent with them. In 1982, 43% of fathers had never changed a diaper. Today, that number is down to 3%",
-    source:
-      "https://www.mother.ly/parenting/millennial-dads-spend-more-time-with-their-kids",
-    category: "society",
-    votesInteresting: 11,
-    votesMindblowing: 2,
-    votesFalse: 0,
-    createdIn: 2019,
-  },
-  {
-    id: 3,
-    text: "Lisbon is the capital of Portugal",
-    source: "https://en.wikipedia.org/wiki/Lisbon",
-    category: "society",
-    votesInteresting: 8,
-    votesMindblowing: 3,
-    votesFalse: 1,
-    createdIn: 2015,
-  },
-];
+// const initialFacts = [
+//   {
+//     id: 1,
+//     text: "React is being developed by Meta (formerly facebook)",
+//     source: "https://opensource.fb.com/",
+//     category: "technology",
+//     votesInteresting: 24,
+//     votesMindblowing: 9,
+//     votesFalse: 4,
+//     createdIn: 2021,
+//   },
+//   {
+//     id: 2,
+//     text: "Millennial dads spend 3 times as much time with their kids than their fathers spent with them. In 1982, 43% of fathers had never changed a diaper. Today, that number is down to 3%",
+//     source:
+//       "https://www.mother.ly/parenting/millennial-dads-spend-more-time-with-their-kids",
+//     category: "society",
+//     votesInteresting: 11,
+//     votesMindblowing: 2,
+//     votesFalse: 0,
+//     createdIn: 2019,
+//   },
+//   {
+//     id: 3,
+//     text: "Lisbon is the capital of Portugal",
+//     source: "https://en.wikipedia.org/wiki/Lisbon",
+//     category: "society",
+//     votesInteresting: 8,
+//     votesMindblowing: 3,
+//     votesFalse: 1,
+//     createdIn: 2015,
+//   },
+// ];
 
 //Looks like HTML, but is in JSX
 //Separate JS for each component in a big project
 //Curly braces can be used in JSX to write JS
 function App() {
-  const [facts, setFacts] = useState([]);
-  const [showForm, setShowForm] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [facts, setFacts] = useState([]); //used to update the facts array
   //empty array ensures that useEffect only runs when the app renders
+  const [showForm, setShowForm] = useState(false); //used to display the form
+  const [isLoading, setIsLoading] = useState(false); //used to display the loading text
+  const [currentCategory, setCurrentCategory] = useState("all"); //used to filter categories
 
-  useEffect(function () {
-    async function getFacts() {
-      setIsLoading(true);
-      const { data: facts, error } = await supabase.from("facts").select("*");
-      setFacts(facts);
-      setIsLoading(false);
-    }
-    getFacts();
-  }, []);
+  useEffect(
+    function () {
+      async function getFacts() {
+        setIsLoading(true);
+
+        let query = supabase.from("facts").select("*");
+        if (currentCategory !== "all")
+          query = query.eq("category", currentCategory);
+
+        //get data from supabase
+        const { data: facts, error } = await query
+          .order("votesInteresting", { ascending: false }) //sort by most interesting fact
+          .limit(25); //limit to 25 facts on a page
+
+        //only set facts if there are no errors
+        if (!error) {
+          setFacts(facts);
+        } else {
+          alert("There was a problem loading the data");
+        }
+
+        setIsLoading(false);
+      }
+      getFacts();
+    },
+    [currentCategory]
+  );
+  //dependency array, when currentCategory changes, run this function again
   return (
     <>
       <Header showForm={showForm} setShowForm={setShowForm} />
       {/* Pass setShowForm as a prop*/}
       {showForm ? (
         <NewFactForm setFacts={setFacts} setShowForm={setShowForm} />
-      ) : null}{" "}
+      ) : null}
       {/* Toggle showing the fact form */}
       <main className="main">
-        <CategoryFilter />
+        <CategoryFilter setCurrentCategory={setCurrentCategory} />
         {isLoading ? <Loader /> : <FactList facts={facts} />}
       </main>
     </>
   );
 }
 
+//edit this loader
 function Loader() {
   return <p className="message">Loading...</p>;
-  
 }
 
 function Header({ showForm, setShowForm }) {
@@ -193,18 +213,24 @@ function NewFactForm({ setFacts, setShowForm }) {
   );
 }
 
-function CategoryFilter() {
+function CategoryFilter({ setCurrentCategory }) {
   return (
     <aside>
       <ul>
         <li>
-          <button className="btn btn-all-categories">All</button>
+          <button
+            className="btn btn-all-categories"
+            onClick={() => setCurrentCategory("all")}
+          >
+            All
+          </button>
         </li>
         {CATEGORIES.map((cat) => (
           <li key={cat.name} className="category">
             <button
               className="btn btn-category"
               style={{ backgroundColor: cat.color }}
+              onClick={() => setCurrentCategory(cat.name)}
             >
               {cat.name}
             </button>
