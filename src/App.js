@@ -20,9 +20,9 @@ const CATEGORIES = [
 //     text: "React is being developed by Meta (formerly facebook)",
 //     source: "https://opensource.fb.com/",
 //     category: "technology",
-//     votesInteresting: 24,
+//     upvotes: 24,
 //     votesMindblowing: 9,
-//     votesFalse: 4,
+//     downvotes: 4,
 //     createdIn: 2021,
 //   },
 //   {
@@ -31,9 +31,9 @@ const CATEGORIES = [
 //     source:
 //       "https://www.mother.ly/parenting/millennial-dads-spend-more-time-with-their-kids",
 //     category: "society",
-//     votesInteresting: 11,
+//     upvotes: 11,
 //     votesMindblowing: 2,
-//     votesFalse: 0,
+//     downvotes: 0,
 //     createdIn: 2019,
 //   },
 //   {
@@ -41,16 +41,14 @@ const CATEGORIES = [
 //     text: "Lisbon is the capital of Portugal",
 //     source: "https://en.wikipedia.org/wiki/Lisbon",
 //     category: "society",
-//     votesInteresting: 8,
+//     upvotes: 8,
 //     votesMindblowing: 3,
-//     votesFalse: 1,
+//     downvotes: 1,
 //     createdIn: 2015,
 //   },
 // ];
 
-//Looks like HTML, but is in JSX
 //Separate JS for each component in a big project
-//Curly braces can be used in JSX to write JS
 function App() {
   const [facts, setFacts] = useState([]); //used to update the facts array
   //empty array ensures that useEffect only runs when the app renders
@@ -63,13 +61,14 @@ function App() {
       async function getFacts() {
         setIsLoading(true);
 
+        //server side filtering of category in order to account large dataset
         let query = supabase.from("facts").select("*");
         if (currentCategory !== "all")
           query = query.eq("category", currentCategory);
 
         //get data from supabase
         const { data: facts, error } = await query
-          .order("votesInteresting", { ascending: false }) //sort by most interesting fact
+          .order("upvotes", { ascending: false }) //sort by most interesting fact
           .limit(25); //limit to 25 facts on a page
 
         //only set facts if there are no errors
@@ -96,7 +95,11 @@ function App() {
       {/* Toggle showing the fact form */}
       <main className="main">
         <CategoryFilter setCurrentCategory={setCurrentCategory} />
-        {isLoading ? <Loader /> : <FactList facts={facts} />}
+        {isLoading ? (
+          <Loader />
+        ) : (
+          <FactList facts={facts} setFacts={setFacts} />
+        )}
       </main>
     </>
   );
@@ -142,10 +145,11 @@ function NewFactForm({ setFacts, setShowForm }) {
   const [text, setText] = useState("");
   const [source, setSource] = useState("");
   const [category, setCategory] = useState("");
+  const [isUploading, setIsUploading] = useState(false); //disable buttons if in the process of uploading a new fact
   const TEXT_LIMIT = 200;
 
   // e for event
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     //Present Browser Reload
     e.preventDefault();
 
@@ -155,22 +159,19 @@ function NewFactForm({ setFacts, setShowForm }) {
     } else {
     }
 
-    //Create a new fact if the data is valid
-    //properties have same name as variables, so don't need : val
-    const newFact = {
-      id: Math.round(Math.random() * 100),
-      text,
-      source,
-      category,
-      votesInteresting: 0,
-      votesMindblowing: 0,
-      votesFalse: 0,
-      createdIn: 2024,
-    };
+    //Create a new fact if the data is valid and upload to supabase
+    setIsUploading(true);
+    const { data: newFact, error } = await supabase
+      .from("facts")
+      .insert([{ text, source, category }])
+      .select();
+    setIsUploading(false);
+    //newFact is an array of these objects and contains only one element
 
     //Add the fact to the UI
-    setFacts((fact) => [newFact, ...fact]);
-    // setFacts((fact) => fact.push(newFact)); NOT RECOMMENDED BECAUSE TREAT STATE AS IMMUTABLE
+    if (!error) setFacts((fact) => [newFact[0], ...fact]);
+    else console.log("Error uploading");
+    // setFacts((fact) => fact.push(newFact[0])); NOT RECOMMENDED BECAUSE TREAT STATE AS IMMUTABLE
 
     //Reset the input field
     setText("");
@@ -188,6 +189,7 @@ function NewFactForm({ setFacts, setShowForm }) {
         placeholder="Share a Fact..."
         value={text}
         onChange={(e) => setText(e.target.value)}
+        disabled={isUploading}
       />
       {/*update state*/}
       <span>{TEXT_LIMIT - text.length}</span>
@@ -196,8 +198,13 @@ function NewFactForm({ setFacts, setShowForm }) {
         placeholder="http://example.com"
         value={source}
         onChange={(e) => setSource(e.target.value)}
+        disabled={isUploading}
       />
-      <select value={category} onChange={(e) => setCategory(e.target.value)}>
+      <select
+        value={category}
+        onChange={(e) => setCategory(e.target.value)}
+        disabled={isUploading}
+      >
         <option key="default" value="">
           Choose Category:
         </option>
@@ -208,7 +215,9 @@ function NewFactForm({ setFacts, setShowForm }) {
           </option>
         ))}
       </select>
-      <button className="btn btn-large">Post</button>
+      <button className="btn btn-large" disabled={isUploading}>
+        Post
+      </button>
     </form>
   );
 }
@@ -241,21 +250,59 @@ function CategoryFilter({ setCurrentCategory }) {
   );
 }
 
-function FactList({ facts }) {
+function FactList({ facts, setFacts }) {
   return (
     <section>
       <ul className="facts-list">
         {facts.map((fact) => (
-          <Fact key={fact.id} fact={fact} />
+          <Fact key={fact.id} fact={fact} setFacts={setFacts} />
         ))}
       </ul>
-      <p>There are {facts.length} facts in the database. Add your own!</p>
+      {facts.length !== 0 ? (
+        <p>There are {facts.length} facts in the database. Add your own!</p>
+      ) : (
+        <p>There are no such facts for this category. Add your own!</p>
+      )}
     </section>
   );
 }
 
 //Assign a component to each fact, so make a new function
-function Fact({ fact }) {
+//pass in a fact prop
+function Fact({ fact, setFacts }) {
+  const [hasUpvoted, setHasUpvoted] = useState(false);
+  const [hasDownvoted, setHasDownvoted] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+  //update row in a database
+  async function handleVote(voteType) {
+    let increment = 1;
+    //make it so that a user can only increment a value once
+    if (voteType === "upvotes") {
+      //if they have pressed it before, then hasUpvoted is true, so set increment to -1  to revert to original state
+      if (hasUpvoted) increment = -1;
+      setHasUpvoted(!hasUpvoted);
+    } else if (voteType === "downvotes") {
+      if (hasDownvoted) increment = -1;
+      setHasDownvoted(!hasDownvoted);
+    }
+
+    setIsUpdating(true);
+    const { data: updatedFact, error } = await supabase
+      .from("facts")
+      .update({ [voteType]: fact[voteType] + increment })
+      .eq("id", fact.id) //update the button at the id of that exact fact
+      .select();
+
+    //go through the facts array and if the id matches, replace that element with the updated elemnt with the increased vote
+    //treat facts array as immutable, so use setFacts
+    if (!error) {
+      setFacts((facts) =>
+        facts.map((el) => (el.id === fact.id ? updatedFact[0] : el))
+      );
+    }
+    setIsUpdating(false);
+  }
+
   return (
     <li className="fact">
       <p>{fact.text}</p>
@@ -271,10 +318,22 @@ function Fact({ fact }) {
       >
         {fact.category}
       </span>
+
       <div className="vote-buttons">
-        <button>👍 {fact.votesInteresting}</button>
-        <button>😱 {fact.votesMindblowing}</button>
-        <button>👎 {fact.votesFalse}</button>
+        <button
+          onClick={() => handleVote("upvotes")}
+          disabled={isUpdating}
+          className={`vote-buttons ${hasUpvoted ? "active" : ""}`} //turn orange if updated
+        >
+          👍 {fact.upvotes}
+        </button>
+        <button
+          onClick={() => handleVote("downvotes")}
+          disabled={isUpdating}
+          className={`vote-buttons ${hasDownvoted ? "active" : ""}`}
+        >
+          👎 {fact.downvotes}
+        </button>
       </div>
     </li>
   );
