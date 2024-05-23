@@ -14,40 +14,6 @@ const CATEGORIES = [
   { name: "news", color: "#8b5cf6" },
 ];
 
-// const initialFacts = [
-//   {
-//     id: 1,
-//     text: "React is being developed by Meta (formerly facebook)",
-//     source: "https://opensource.fb.com/",
-//     category: "technology",
-//     upvotes: 24,
-//     votesMindblowing: 9,
-//     downvotes: 4,
-//     createdIn: 2021,
-//   },
-//   {
-//     id: 2,
-//     text: "Millennial dads spend 3 times as much time with their kids than their fathers spent with them. In 1982, 43% of fathers had never changed a diaper. Today, that number is down to 3%",
-//     source:
-//       "https://www.mother.ly/parenting/millennial-dads-spend-more-time-with-their-kids",
-//     category: "society",
-//     upvotes: 11,
-//     votesMindblowing: 2,
-//     downvotes: 0,
-//     createdIn: 2019,
-//   },
-//   {
-//     id: 3,
-//     text: "Lisbon is the capital of Portugal",
-//     source: "https://en.wikipedia.org/wiki/Lisbon",
-//     category: "society",
-//     upvotes: 8,
-//     votesMindblowing: 3,
-//     downvotes: 1,
-//     createdIn: 2015,
-//   },
-// ];
-
 //Separate JS for each component in a big project
 function App() {
   const [facts, setFacts] = useState([]); //used to update the facts array
@@ -88,6 +54,7 @@ function App() {
   return (
     <>
       <Header showForm={showForm} setShowForm={setShowForm} />
+      <hr className="divider" />
       {/* Pass setShowForm as a prop*/}
       {showForm ? (
         <NewFactForm setFacts={setFacts} setShowForm={setShowForm} />
@@ -98,7 +65,11 @@ function App() {
         {isLoading ? (
           <Loader />
         ) : (
-          <FactList facts={facts} setFacts={setFacts} />
+          <FactList
+            facts={facts}
+            setFacts={setFacts}
+            currentCategory={currentCategory}
+          />
         )}
       </main>
     </>
@@ -115,7 +86,7 @@ function Header({ showForm, setShowForm }) {
   return (
     <header className="header">
       <div className="logo">
-        <img src="logo.png" height="68" width="68" alt="Today I Learned Logo" />
+        <img src="logo.png" height="64" width="64" alt="Today I Learned Logo" />
         <h1>{appTitle}</h1>
       </div>
       <button
@@ -129,24 +100,24 @@ function Header({ showForm, setShowForm }) {
   );
 }
 
-//check the source input for a valid url
-function validURL(string) {
-  let url;
-
-  try {
-    url = new URL(string);
-  } catch (_) {
-    return false;
-  }
-  return url.protocol === "http:" || url.protocol === "https:";
-}
-
 function NewFactForm({ setFacts, setShowForm }) {
   const [text, setText] = useState("");
   const [source, setSource] = useState("");
   const [category, setCategory] = useState("");
   const [isUploading, setIsUploading] = useState(false); //disable buttons if in the process of uploading a new fact
   const TEXT_LIMIT = 200;
+
+  //check the source input for a valid url
+  function validURL(string) {
+    let url;
+
+    try {
+      url = new URL(string);
+    } catch (_) {
+      return false;
+    }
+    return url.protocol === "http:" || url.protocol === "https:";
+  }
 
   // e for event
   async function handleSubmit(e) {
@@ -250,7 +221,35 @@ function CategoryFilter({ setCurrentCategory }) {
   );
 }
 
-function FactList({ facts, setFacts }) {
+function FactList({ facts, setFacts, currentCategory }) {
+  //the display message differs based on the current category and the number of facts to be displayed
+  //this function aims to alleviate that by considering all of these factors
+  function displayMessage() {
+    if (currentCategory === "all")
+      return (
+        <p>There are {facts.length} facts in the database. Add your own!</p>
+      );
+    if (facts.length === 0)
+      return (
+        <p>
+          There are no {currentCategory} facts in the database. Add your own!
+        </p>
+      );
+    else if (facts.length === 1)
+      return (
+        <p>
+          There is {facts.length} {currentCategory} fact in the database. Add
+          your own!
+        </p>
+      );
+    else
+      return (
+        <p>
+          There are {facts.length} {currentCategory} facts in the database. Add
+          your own!
+        </p>
+      );
+  }
   return (
     <section>
       <ul className="facts-list">
@@ -258,11 +257,7 @@ function FactList({ facts, setFacts }) {
           <Fact key={fact.id} fact={fact} setFacts={setFacts} />
         ))}
       </ul>
-      {facts.length !== 0 ? (
-        <p>There are {facts.length} facts in the database. Add your own!</p>
-      ) : (
-        <p>There are no such facts for this category. Add your own!</p>
-      )}
+      {displayMessage()}
     </section>
   );
 }
@@ -307,7 +302,7 @@ function Fact({ fact, setFacts }) {
     <li className="fact">
       <p>{fact.text}</p>
       <a className="source" href={fact.source} target="_blank" rel="noreferrer">
-        (Source)
+        (source)
       </a>
       <span
         className="tag"
