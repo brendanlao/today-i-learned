@@ -1,70 +1,24 @@
-# Getting Started with Create React App
+## The Project
+This web app is titled Today I Learned, and it is a single page application used to share and vote on interesting facts, built using React. It uses Supabase as a backend in order to store and retrieve facts.  
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Functionality
+Users can view a list of facts, filter them by category, submit new facts, and vote on existing facts. Each user can only vote for each fact once and the facts are stored in a Supabase database.  To improve this project, I would add additional functionality such as user authentication and authorization as well as user profiles to manage facts added.  
 
-## Available Scripts
+## Project Screen Shot(s)
+This is the main view of the app.
+<img width="1260" alt="Project main view" src="https://github.com/brendanlao/today-i-learned/assets/132109461/ea3b0638-40ca-4dd1-9e73-0d15f463d1ee">
 
-In the project directory, you can run:
+This is how users filter facts in the database(in this case, the technology filter was selected).  Users can also upvote or downvote individual facts, and this is reflected in the orange highlight of the button.
+<img width="1260" alt="Project displaying the submit form" src="https://github.com/brendanlao/today-i-learned/assets/132109461/3aa939d0-1ffc-4758-851f-7d3fbc94a2e4">
 
-### `npm start`
+This is the database on Supabase
+<img width="1260" alt="Supabase database" src="https://github.com/brendanlao/today-i-learned/assets/132109461/a835f3db-ddbe-4d95-959e-ebec673cd000">
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Reflection
+This was a side project built to gain practical experience using React and integrating it with a backend API. The main goal was to familiarize myself with React fundamentals such as using components, passing props, and using hooks.  Additionally, I also familiarized myself with basic file organization, with designated JavaScript files for each component.  I also had additional practice dealing with asynchronous JavaScript and promises through async functions. 
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+This project was adapted off of Jonas Schmedtmann's full stack web app course, but with added functionality such as changing the upvote functionality so that a user could only upvote/downvote a fact once as well as changing the logic for displaying how many facts there were after filtering facts by category. The project was initialized using the create-react-app boilerplate, and while this is deprecated, I thought it was suitable since this was a project served as a way to familiarize myself with React.
 
-### `npm test`
+One of the main challenges in this project was adjusting to the use of JSX.  More specifically, challenges included understanding how only JavaScript expressions and not statements could be used in JSX, adjusting to the syntax through camel casing attributes, as well as understanding why keys were needed when rendering lists.  However, understanding work-arounds such as using ternary or logical operators provided valuable learning experiences and deepened my understanding of JavaScript.  
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Overall, this project provided a good opportunity to practice React fundamentals and further understand the frontend.  From this, I plan on exploring other advanced React topics such as state management using Redux, testing components using tools like React Testing Library, and performance optimization by understanding techniques such as memoization.  Additionally, I recognize the importance of strengthening my fundamentals in HTML and CSS to become more well rounded.
