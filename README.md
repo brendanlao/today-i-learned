@@ -1,63 +1,24 @@
-## Project Name & Pitch
+## The Project
+This web app is titled Today I Learned, and it is a single page application used to share and vote on interesting facts, built using React. It uses Supabase as a backend in order to store and retrieve facts.  
 
-#### Example:
-
-TweetWorld 
-
-An application used to filter data form Twitter based on user preference, built with React, Redux, JavaScript, and CSS.
-
-## Project Status
-(only necessary if incomplete)
-
-#### Example:
-
-This project is currently in development. Users can filter tweets by username and keyword and see visual data representation. Functionality to sort by additional parameters is in progress.
+## Functionality
+Users can view a list of facts, filter them by category, submit new facts, and vote on existing facts. Each user can only vote for each fact once and the facts are stored in a Supabase database.  To improve this project, I would add additional functionality such as user authentication and authorization as well as user profiles to manage facts added.  
 
 ## Project Screen Shot(s)
+This is the main view of the app.
+<img width="1260" alt="Project main view" src="https://github.com/brendanlao/today-i-learned/assets/132109461/ea3b0638-40ca-4dd1-9e73-0d15f463d1ee">
 
-#### Example:   
+This is how users filter facts in the database(in this case, the technology filter was selected).  Users can also upvote or downvote individual facts, and this is reflected in the orange highlight of the button.
+<img width="1260" alt="Project displaying the submit form" src="https://github.com/brendanlao/today-i-learned/assets/132109461/3aa939d0-1ffc-4758-851f-7d3fbc94a2e4">
 
-[ PRETEND SCREEN SHOT IS HERE ]
-
-[ PRETEND OTHER SCREEN SHOT IS HERE ]
-
-## Installation and Setup Instructions
-
-#### Example:  
-
-Clone down this repository. You will need `node` and `npm` installed globally on your machine.  
-
-Installation:
-
-`npm install`  
-
-To Run Test Suite:  
-
-`npm test`  
-
-To Start Server:
-
-`npm start`  
-
-To Visit App:
-
-`localhost:3000/ideas`  
+This is the database on Supabase
+<img width="1260" alt="Supabase database" src="https://github.com/brendanlao/today-i-learned/assets/132109461/a835f3db-ddbe-4d95-959e-ebec673cd000">
 
 ## Reflection
+This was a side project built to gain practical experience using React and integrating it with a backend API. The main goal was to familiarize myself with React fundamentals such as using components, passing props, and using hooks.  Additionally, I also familiarized myself with basic file organization, with designated JavaScript files for each component.  I also had additional practice dealing with asynchronous JavaScript and promises through async functions. 
 
-  - What was the context for this project? (ie: was this a side project? was this for Turing? was this for an experiment?)
-  - What did you set out to build?
-  - Why was this project challenging and therefore a really good learning experience?
-  - What were some unexpected obstacles?
-  - What tools did you use to implement this project?
-      - This might seem obvious because you are IN this codebase, but to all other humans now is the time to talk about why you chose webpack instead of create react app, or D3, or vanilla JS instead of a framework etc. Brag about your choices and justify them here.  
+This project was adapted off of Jonas Schmedtmann's full stack web app course, but with added functionality such as changing the upvote functionality so that a user could only upvote/downvote a fact once as well as changing the logic for displaying how many facts there were after filtering facts by category. The project was initialized using the create-react-app boilerplate, and while this is deprecated, I thought it was suitable since this was a project served as a way to familiarize myself with React.
 
-#### Example:  
+One of the main challenges in this project was adjusting to the use of JSX.  More specifically, challenges included understanding how only JavaScript expressions and not statements could be used in JSX, adjusting to the syntax through camel casing attributes, as well as understanding why keys were needed when rendering lists.  However, understanding work-arounds such as using ternary or logical operators provided valuable learning experiences and deepened my understanding of JavaScript.  
 
-This was a 3 week long project built during my third module at Turing School of Software and Design. Project goals included using technologies learned up until this point and familiarizing myself with documentation for new features.  
-
-Originally I wanted to build an application that allowed users to pull data from the Twitter API based on what they were interested in, such as 'most tagged users'. I started this process by using the `create-react-app` boilerplate, then adding `react-router-4.0` and `redux`.  
-
-One of the main challenges I ran into was Authentication. This lead me to spend a few days on a research spike into OAuth, Auth0, and two-factor authentication using Firebase or other third parties. Due to project time constraints, I had to table authentication and focus more on data visualization from parts of the API that weren't restricted to authenticated users.
-
-At the end of the day, the technologies implemented in this project are React, React-Router 4.0, Redux, LoDash, D3, and a significant amount of VanillaJS, JSX, and CSS. I chose to use the `create-react-app` boilerplate to minimize initial setup and invest more time in diving into weird technological rabbit holes. In the next iteration I plan on handrolling a `webpack.config.js` file to more fully understand the build process.
+Overall, this project provided a good opportunity to practice React fundamentals and further understand the frontend.  From this, I plan on exploring other advanced React topics such as state management using Redux, testing components using tools like React Testing Library, and performance optimization by understanding techniques such as memoization.  Additionally, I recognize the importance of strengthening my fundamentals in HTML and CSS to become more well rounded.
