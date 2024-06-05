@@ -4,7 +4,7 @@ This web app is titled Today I Learned, and it is a single page application used
 ## Functionality
 Users can view a list of facts, filter them by category, submit new facts, and vote on existing facts. Each user can only vote for each fact once and the facts are stored in a Supabase database.  To improve this project, I would add additional functionality such as user authentication and authorization as well as user profiles to manage facts added.  
 
-## Project Screen Shot(s)
+## Project Screen Shot
 This is the main view of the app.
 <img width="1260" alt="Project main view" src="https://github.com/brendanlao/today-i-learned/assets/132109461/ea3b0638-40ca-4dd1-9e73-0d15f463d1ee">
 
